@@ -1,0 +1,25 @@
+{
+  "name": "documenty",
+  "version": "1.0.0",
+  "description": "DocuMenty - Create, Edit, Share & Work on documents simultaneously with your peers.",
+  "main": "index.js",
+  "scripts": {
+    "server": "nodemon server.js",
+    "client": "npm start --prefix ../client",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^6.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-async-handler": "^1.1.4",
+    "mongoose": "^5.12.5",
+    "socket.io": "^4.0.1"
+  },
+  "devDependencies": {}
+}
