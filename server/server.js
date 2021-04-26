@@ -5,6 +5,8 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const documentRoutes = require('./routes/documentRoutes');
+const userRoutes = require('./routes/userRoutes');
+const { notFound, errorHandler } = require('./middleware/errorMiddleware.js');
 
 dotenv.config();
 
@@ -25,8 +27,8 @@ const io = require('socket.io')(3001, {
 const defaultValue = '';
 
 io.on('connection', (socket) => {
-  socket.on('get-document', async (documentId) => {
-    const document = await findOrCreateDocument(documentId);
+  socket.on('get-document', async (documentId, userId) => {
+    const document = await findOrCreateDocument(documentId, userId);
     socket.join(documentId);
     socket.emit('load-document', document.data, document.name);
 
@@ -44,15 +46,20 @@ io.on('connection', (socket) => {
   });
 });
 
-async function findOrCreateDocument(id) {
-  if (id == null) return;
-
+async function findOrCreateDocument(id, userId) {
+  if (id == null || userId == null) return;
   const document = await Document.findById(id);
-  if (document) return document;
+  if (
+    document &&
+    (document.owner == userId || document.editors.includes(userId))
+  )
+    return document;
+
   return await Document.create({
     _id: id,
     data: defaultValue,
     name: `Untitled-${id}`,
+    owner: userId,
   });
 }
 
@@ -60,10 +67,14 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/documents', documentRoutes);
+app.use('/api/users', userRoutes);
 
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
+
+app.use(notFound);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
