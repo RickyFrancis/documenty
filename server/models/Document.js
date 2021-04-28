@@ -1,21 +1,26 @@
 const { Schema, model } = require('mongoose');
 
-const Document = new Schema({
-  _id: String,
-  name: String,
-  data: Object,
-  owner: {
-    type: Schema.Types.ObjectId,
-    required: true,
-    ref: 'User',
-  },
-  editors: [
-    {
+const Document = new Schema(
+  {
+    _id: String,
+    name: String,
+    data: Object,
+    owner: {
       type: Schema.Types.ObjectId,
+      required: true,
       ref: 'User',
-      unique: true,
     },
-  ],
-});
+    editors: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        unique: true,
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
 
 module.exports = model('Document', Document);

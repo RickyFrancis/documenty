@@ -6,15 +6,67 @@ const User = require('../models/User');
 // @route GET /api/documents
 // @access Private/Admin
 const getDocuments = asyncHandler(async (req, res) => {
-  const documents = await Document.find({
-    $or: [
-      { owner: req.user.id },
-      {
-        editors: req.user.id,
-      },
-    ],
+  const pageSize = 10;
+  const page = Number(req.query.pageNumber) || 1;
+  const keyword = req.query.keyword
+    ? {
+        name: {
+          $regex: req.query.keyword,
+          $options: 'i',
+        },
+        $or: [
+          { owner: req.user.id },
+          {
+            editors: req.user.id,
+          },
+        ],
+      }
+    : {
+        $or: [
+          { owner: req.user.id },
+          {
+            editors: req.user.id,
+          },
+        ],
+      };
+
+  const count = await Document.countDocuments({
+    ...keyword,
   });
-  res.json(documents);
+  const documents = await Document.find({
+    ...keyword,
+  })
+    .populate('editors', ['name', 'email'])
+    .populate('owner', ['name', 'email'])
+    .limit(pageSize)
+    .skip(pageSize * (page - 1))
+    .sort({ updatedAt: -1 });
+
+  res.json({
+    documents,
+    page,
+    pages: Math.ceil(count / pageSize),
+    keyword: req.query.keyword,
+  });
+});
+
+// @desc Get single document by ID
+// @route GET /api/documents/:id
+// @access Private/Admin
+const getSingleDocuments = asyncHandler(async (req, res) => {
+  const document = await Document.findOne({
+    _id: req.params.id,
+    owner: req.user.id,
+  })
+    .populate('editors', ['name', 'email'])
+    .populate('owner', ['name', 'email']);
+
+  if (document) {
+    res.json(document);
+  } else {
+    res.status(404);
+    throw new Error('Document not found');
+  }
 });
 
 // @desc Delete a document
@@ -56,11 +108,13 @@ const addNewEditor = asyncHandler(async (req, res) => {
     const document = await Document.findOne({
       _id: req.params.id,
       owner: req.user._id,
-    });
+    })
+      .populate('editors', ['name', 'email'])
+      .populate('owner', ['name', 'email']);
 
     if (document) {
       const alreadyAdded = document.editors.find(
-        (editorCheck) => editorCheck.toString() === editor._id.toString()
+        (editorCheck) => editorCheck._id.toString() === editor._id.toString()
       );
       if (alreadyAdded) {
         res.status(400);
@@ -71,7 +125,14 @@ const addNewEditor = asyncHandler(async (req, res) => {
 
       await document.save();
 
-      res.status(201).json({ message: 'Editor added' });
+      const updatedDocument = await Document.findOne({
+        _id: req.params.id,
+        owner: req.user._id,
+      })
+        .populate('editors', ['name', 'email'])
+        .populate('owner', ['name', 'email']);
+
+      res.json(updatedDocument);
     } else {
       res.status(404);
       throw new Error('Document not found');
@@ -96,11 +157,13 @@ const removeEditor = asyncHandler(async (req, res) => {
     const document = await Document.findOne({
       _id: req.params.id,
       owner: req.user._id,
-    });
+    })
+      .populate('editors', ['name', 'email'])
+      .populate('owner', ['name', 'email']);
 
     if (document) {
       const editorExists = document.editors.find(
-        (editorCheck) => editorCheck.toString() === editor._id.toString()
+        (editorCheck) => editorCheck._id.toString() === editor._id.toString()
       );
       if (!editorExists) {
         res.status(400);
@@ -111,7 +174,7 @@ const removeEditor = asyncHandler(async (req, res) => {
 
       await document.save();
 
-      res.status(200).json({ message: 'Editor removed' });
+      res.json(document);
     } else {
       res.status(404);
       throw new Error('Document not found');
@@ -122,4 +185,10 @@ const removeEditor = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { getDocuments, deleteDocument, addNewEditor, removeEditor };
+module.exports = {
+  getDocuments,
+  deleteDocument,
+  addNewEditor,
+  removeEditor,
+  getSingleDocuments,
+};

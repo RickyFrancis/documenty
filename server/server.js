@@ -52,15 +52,18 @@ async function findOrCreateDocument(id, userId) {
   if (
     document &&
     (document.owner == userId || document.editors.includes(userId))
-  )
+  ) {
     return document;
-
-  return await Document.create({
-    _id: id,
-    data: defaultValue,
-    name: `Untitled-${id}`,
-    owner: userId,
-  });
+  } else if (document) {
+    return false;
+  } else {
+    return await Document.create({
+      _id: id,
+      data: defaultValue,
+      name: `Untitled-${id}`,
+      owner: userId,
+    });
+  }
 }
 
 app.use(cors());

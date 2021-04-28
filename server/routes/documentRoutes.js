@@ -5,6 +5,7 @@ const { protect } = require('../middleware/authMiddleware');
 
 const {
   getDocuments,
+  getSingleDocuments,
   deleteDocument,
   addNewEditor,
   removeEditor,
@@ -12,10 +13,13 @@ const {
 // import { protect, admin } from '../middleware/authMiddleware.js';
 
 router.route('/').get(protect, getDocuments);
-router.route('/:id').delete(protect, deleteDocument);
+router
+  .route('/:id')
+  .delete(protect, deleteDocument)
+  .get(protect, getSingleDocuments);
 router
   .route('/:id/editors')
   .post(protect, addNewEditor)
-  .delete(protect, removeEditor);
+  .put(protect, removeEditor);
 
 module.exports = router;
