@@ -6,7 +6,7 @@ const User = require('../models/User');
 // @route GET /api/documents
 // @access Private/Admin
 const getDocuments = asyncHandler(async (req, res) => {
-  const pageSize = 10;
+  const pageSize = 5;
   const page = Number(req.query.pageNumber) || 1;
   const keyword = req.query.keyword
     ? {
