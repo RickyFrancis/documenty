@@ -64,7 +64,7 @@ const TextEditor = ({ history }) => {
   const [quill, setQuill] = useState();
 
   useEffect(() => {
-    const s = io('http://127.0.0.1:5001/');
+    const s = io('https://documenty.herokuapp.com:5001/');
     setSocket(s);
 
     return () => {
