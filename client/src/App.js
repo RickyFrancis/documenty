@@ -25,8 +25,8 @@ function App() {
           <Route path="/login" component={LoginScreen} />
           <Route path="/register" component={RegisterScreen} />
           <Route path="/profile" component={ProfileScreen} />
-          <Route path="/documents/:id" component={TextEditor} />
         </Container>
+        <Route path="/documents/:id" component={TextEditor} />
       </main>
     </Router>
   );

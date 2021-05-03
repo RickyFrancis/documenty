@@ -20,7 +20,7 @@ mongoose.connect(process.env.MONGO_URI, {
 
 const io = require('socket.io')(5001, {
   cors: {
-    origin: 'http://localhost:5000',
+    origin: 'http://127.0.0.1:5000',
     methods: ['GET', 'POST'],
   },
 });

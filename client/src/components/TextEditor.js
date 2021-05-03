@@ -40,6 +40,7 @@ const TOOLBAR_OPTIONS = [
 // ];
 
 const TextEditor = ({ history }) => {
+  const { id: documentId } = useParams();
   const [show, setShow] = useState(false);
   const handleClose = () => {
     setShow(false);
@@ -52,9 +53,10 @@ const TextEditor = ({ history }) => {
   const dispatch = useDispatch();
 
   const userInfo = useSelector((state) => state.userLogin.userInfo);
-  const { _id: userId, name: userName, email, token } = userInfo;
 
-  const { id: documentId } = useParams();
+  if (!userInfo) {
+    history.push(`/login?redirect=/documents/${documentId}`);
+  }
 
   const [name, setName] = useState();
   const [alertStatus, setAlertStatus] = useState(false);
@@ -72,7 +74,7 @@ const TextEditor = ({ history }) => {
 
   // Get and load document
   useEffect(() => {
-    if (socket == null || quill == null) return;
+    if (socket == null || quill == null || userInfo == null) return;
 
     socket.once('load-document', (document, name) => {
       if (document == null) {
@@ -85,10 +87,10 @@ const TextEditor = ({ history }) => {
       quill.enable();
     });
 
-    socket.emit('get-document', documentId, userId);
+    socket.emit('get-document', documentId, userInfo._id);
 
     return () => {};
-  }, [socket, quill, documentId, userId, history]);
+  }, [socket, quill, documentId, userInfo, history]);
 
   // Send Changes
   useEffect(() => {
