@@ -7,7 +7,7 @@ const Message = ({ variant, children, permanent }) => {
   if (!permanent) {
     setTimeout(() => {
       setHidden(true);
-    }, 5000);
+    }, 3000);
   }
 
   return (

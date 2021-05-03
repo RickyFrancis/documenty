@@ -9,6 +9,8 @@ import { Form, Button, Row, Col, Container, Alert } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import { useDispatch, useSelector } from 'react-redux';
+import ModalPopUp from '../components/ModalPopUp';
+import { DOCUMENT_DETAILS_RESET } from '../constants/documentConstants';
 
 const SAVE_INTERVAL_MS = 2000;
 
@@ -38,6 +40,15 @@ const TOOLBAR_OPTIONS = [
 // ];
 
 const TextEditor = ({ history }) => {
+  const [show, setShow] = useState(false);
+  const handleClose = () => {
+    setShow(false);
+    dispatch({ type: DOCUMENT_DETAILS_RESET });
+  };
+  const handleShow = () => {
+    setShow(true);
+  };
+
   const dispatch = useDispatch();
 
   const userInfo = useSelector((state) => state.userLogin.userInfo);
@@ -51,7 +62,7 @@ const TextEditor = ({ history }) => {
   const [quill, setQuill] = useState();
 
   useEffect(() => {
-    const s = io('http://127.0.0.1:3001');
+    const s = io('http://127.0.0.1:5001/');
     setSocket(s);
 
     return () => {
@@ -171,45 +182,28 @@ const TextEditor = ({ history }) => {
   }, []);
   return (
     <>
-      <div className="container pt-3 pb-3">
-        <Form>
-          <Form.Row>
-            <Col xs={2}>
-              <LinkContainer to={`/`}>
-                <Button variant="primary" className="back-btn">
-                  <i className="fas fa-arrow-left"></i>
-                </Button>
-              </LinkContainer>
-            </Col>
-            <Col xs={8}>
-              <Form.Control
-                type="text"
-                // placeholder="Document Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              ></Form.Control>
-            </Col>
-            <Col xs={2}>
-              <LinkContainer to={`/`}>
-                <Button variant="primary" className="back-btn">
-                  <i className="fas fa-arrow-left"></i>
-                </Button>
-              </LinkContainer>
-            </Col>
-          </Form.Row>
-        </Form>
-        <Row>
-          <Col xs={2} sm={1}>
+      {show && (
+        <ModalPopUp show={show} handleClose={handleClose} id={documentId} />
+      )}
+      <div className="container mb-2">
+        <Row className="mb-2">
+          <Col xs={12}>
             <LinkContainer to={`/`}>
-              <Button variant="primary" className="back-btn">
-                <i className="fas fa-arrow-left"></i>
+              <Button variant="primary">
+                <i className="fas fa-arrow-left"></i> Back
               </Button>
             </LinkContainer>
+            &nbsp;
+            <Button variant="light" onClick={() => handleShow()}>
+              <i className="fas fa-user-plus"></i> Editors
+            </Button>
           </Col>
-          <Col xs={10} sm={11}>
+        </Row>
+        <Row>
+          <Col xs={12}>
             <Form.Control
               type="text"
-              // placeholder="Document Name"
+              placeholder="Document Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="name-field"

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { v4 as uuidV4 } from 'uuid';
 import {
   Form,
@@ -16,59 +15,25 @@ import { LinkContainer } from 'react-router-bootstrap';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import Paginate from '../components/Paginate';
+import ModalPopUp from '../components/ModalPopUp';
 import { DOCUMENT_DETAILS_RESET } from '../constants/documentConstants';
 
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  listDocuments,
-  deleteDocument,
-  getSingleDocument,
-  addEditor,
-  removeEditor,
-} from '../actions/documentActions';
+import { listDocuments, deleteDocument } from '../actions/documentActions';
 
 const HomeScreen = ({ match, history }) => {
   const dispatch = useDispatch();
 
-  const documentDetails = useSelector((state) => state.documentDetails);
-  const {
-    loading: loadingDocumentDetails,
-    error: errorDocumentDetails,
-    document,
-  } = documentDetails;
-
-  const [email, setEmail] = useState('');
   const [show, setShow] = useState(false);
+  const [documentId, setDocumentId] = useState('');
   const handleClose = () => {
     setShow(false);
     dispatch({ type: DOCUMENT_DETAILS_RESET });
-    setEmail('');
   };
   const handleShow = (id) => {
-    dispatch(getSingleDocument(id));
+    setDocumentId(id);
     setShow(true);
   };
-
-  const addEditorHandler = (e, email, documentId) => {
-    e.preventDefault();
-    dispatch(addEditor(email, documentId));
-  };
-
-  const documentAddEditor = useSelector((state) => state.documentAddEditor);
-  const {
-    loading: loadingAddEditor,
-    error: errorAddEditor,
-    success: successAddEditor,
-  } = documentAddEditor;
-
-  const documentRemoveEditor = useSelector(
-    (state) => state.documentRemoveEditor
-  );
-  const {
-    loading: loadingRemoveEditor,
-    error: errorRemoveEditor,
-    success: successRemoveEditor,
-  } = documentRemoveEditor;
 
   const keyword = match.params.keyword;
 
@@ -118,13 +83,6 @@ const HomeScreen = ({ match, history }) => {
     }
   };
 
-  const removeEditorHandler = (e, email, documentId) => {
-    e.preventDefault();
-    if (window.confirm('Are you sure you want to remove this editor?')) {
-      dispatch(removeEditor(email, documentId));
-    }
-  };
-
   return (
     <>
       <Row className="align-items-center">
@@ -147,100 +105,9 @@ const HomeScreen = ({ match, history }) => {
         <Message variant="danger">{error}</Message>
       ) : (
         <>
-          <Modal show={show} onHide={handleClose}>
-            <Modal.Header closeButton>
-              <Modal.Title>Add or Remove Document Editors</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              {loadingDocumentDetails ? (
-                <Loader />
-              ) : errorDocumentDetails ? (
-                <Message variant="danger">{error}</Message>
-              ) : (
-                <>
-                  <Form
-                    onSubmit={(e) => {
-                      addEditorHandler(e, email, document._id);
-                    }}
-                  >
-                    <InputGroup className="mb-3">
-                      <Form.Control
-                        type="email"
-                        placeholder="Enter Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                      ></Form.Control>
-                      <InputGroup.Append>
-                        <Button type="submit" variant="primary">
-                          Add &nbsp;
-                          <Spinner
-                            animation="border"
-                            size="sm"
-                            hidden={!loadingAddEditor}
-                          />
-                        </Button>
-                      </InputGroup.Append>
-                    </InputGroup>
-                  </Form>
-                  {errorAddEditor && (
-                    <Message variant="danger">{errorAddEditor}</Message>
-                  )}
-                  {errorRemoveEditor && (
-                    <Message variant="danger">{errorRemoveEditor}</Message>
-                  )}
-                  {successAddEditor && <Message>Editor Added!</Message>}
-                  {successRemoveEditor && <Message>Editor Removed!</Message>}
-                  <ListGroup variant="flush">
-                    {document.editors && document.editors.length > 0 && (
-                      <ListGroup.Item
-                        style={{ border: '1px solid rgba(255,255,255, 0.5)' }}
-                      >
-                        Editors
-                      </ListGroup.Item>
-                    )}
-
-                    {document.editors && document.editors.length > 0 ? (
-                      document.editors.map((editor) => (
-                        <ListGroup.Item
-                          style={{
-                            border: '1px solid rgba(255,255,255, 0.2)',
-                          }}
-                          key={editor._id}
-                        >
-                          {editor.email} &nbsp;
-                          <Button
-                            variant="outline-primary"
-                            size="sm"
-                            onClick={(e) => {
-                              removeEditorHandler(
-                                e,
-                                editor.email,
-                                document._id
-                              );
-                            }}
-                          >
-                            <i className="fas fa-times"></i>
-                          </Button>
-                        </ListGroup.Item>
-                      ))
-                    ) : (
-                      <ListGroup.Item>
-                        This document has no editors
-                      </ListGroup.Item>
-                    )}
-                  </ListGroup>
-                </>
-              )}
-            </Modal.Body>
-            <Modal.Footer>
-              {/* <Button variant="secondary" onClick={handleClose}>
-                Close
-              </Button> */}
-              <Button variant="primary" onClick={handleClose}>
-                Done &nbsp; <i className="fas fa-check"></i>
-              </Button>
-            </Modal.Footer>
-          </Modal>
+          {show && (
+            <ModalPopUp show={show} handleClose={handleClose} id={documentId} />
+          )}
 
           <Table striped bordered hover responsive variant="secondary">
             <thead>

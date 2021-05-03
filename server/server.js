@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Document = require('./models/Document');
 const dotenv = require('dotenv');
+const path = require('path');
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -17,9 +18,9 @@ mongoose.connect(process.env.MONGO_URI, {
   useFindAndModify: false,
 });
 
-const io = require('socket.io')(3001, {
+const io = require('socket.io')(5001, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:5000',
     methods: ['GET', 'POST'],
   },
 });
@@ -72,9 +73,21 @@ app.use(express.json());
 app.use('/api/documents', documentRoutes);
 app.use('/api/users', userRoutes);
 
-app.get('/', (req, res) => {
-  res.send('API is running...');
-});
+// const __dirname = path.resolve();
+
+process.env.NODE_ENV = 'production';
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../client/build')));
+
+  app.get('*', (req, res) =>
+    res.sendFile(path.resolve(__dirname, '../client', 'build', 'index.html'))
+  );
+} else {
+  app.get('/', (req, res) => {
+    res.send('API is running...');
+  });
+}
 
 app.use(notFound);
 app.use(errorHandler);
