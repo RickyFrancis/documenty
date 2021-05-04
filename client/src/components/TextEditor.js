@@ -3,9 +3,8 @@ import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import { io } from 'socket.io-client';
 import { useParams } from 'react-router-dom';
-import { Form, Button, Row, Col, Container, Alert } from 'react-bootstrap';
+import { Form, Button, Row, Col } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import Loader from '../components/Loader';
 import { useDispatch, useSelector } from 'react-redux';
 import ModalPopUp from '../components/ModalPopUp';
 import { DOCUMENT_DETAILS_RESET } from '../constants/documentConstants';
@@ -44,7 +43,7 @@ const TextEditor = ({ history }) => {
   }
 
   const [name, setName] = useState();
-  const [alertStatus, setAlertStatus] = useState(false);
+  const [owner, setOwner] = useState();
   const [socket, setSocket] = useState();
   const [quill, setQuill] = useState();
 
@@ -61,13 +60,13 @@ const TextEditor = ({ history }) => {
   useEffect(() => {
     if (socket == null || quill == null || userInfo == null) return;
 
-    socket.once('load-document', (document, name) => {
+    socket.once('load-document', (document, name, owner) => {
       if (document == null) {
         history.push('/');
       }
 
       setName(name);
-      console.log('Get and Load Document');
+      setOwner(owner);
       quill.setContents(document);
       quill.enable();
     });
@@ -182,9 +181,15 @@ const TextEditor = ({ history }) => {
               </Button>
             </LinkContainer>
             &nbsp;
-            <Button variant="light" onClick={() => handleShow()}>
-              <i className="fas fa-user-plus"></i> Editors
-            </Button>
+            {userInfo && owner && owner.toString() === userInfo._id.toString() && (
+              <Button
+                className="btn-sm"
+                onClick={() => handleShow(document._id)}
+                variant="light"
+              >
+                Editors
+              </Button>
+            )}
           </Col>
         </Row>
         <Row>

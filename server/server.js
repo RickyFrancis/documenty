@@ -36,7 +36,7 @@ io.on('connection', (socket) => {
   socket.on('get-document', async (documentId, userId) => {
     const document = await findOrCreateDocument(documentId, userId);
     socket.join(documentId);
-    socket.emit('load-document', document.data, document.name);
+    socket.emit('load-document', document.data, document.name, document.owner);
 
     socket.on('send-changes', (delta) => {
       socket.broadcast.to(documentId).emit('receive-changes', delta);
