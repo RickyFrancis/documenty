@@ -151,13 +151,16 @@ const HomeScreen = ({ match, history }) => {
                       >
                         <Button className="btn-sm">Open</Button>
                       </LinkContainer>
-                      <Button
-                        variant="danger"
-                        className="btn-sm m-1"
-                        onClick={() => deleteHandler(document._id)}
-                      >
-                        <i className="fas fa-trash"></i>
-                      </Button>
+                      {document.owner._id.toString() ===
+                        userInfoLogin._id.toString() && (
+                        <Button
+                          variant="danger"
+                          className="btn-sm m-1"
+                          onClick={() => deleteHandler(document._id)}
+                        >
+                          <i className="fas fa-trash"></i>
+                        </Button>
+                      )}
                     </td>
                   </tr>
                 ))

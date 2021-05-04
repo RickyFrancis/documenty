@@ -95,7 +95,9 @@ const ModalPopUp = ({ show, handleClose, id }) => {
               </InputGroup>
             </Form>
             {errorAddEditor && (
-              <Message variant="danger">{errorAddEditor}</Message>
+              <Message variant="danger" timeOut={6000}>
+                {errorAddEditor}
+              </Message>
             )}
             {errorRemoveEditor && (
               <Message variant="danger">{errorRemoveEditor}</Message>

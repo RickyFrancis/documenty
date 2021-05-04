@@ -113,6 +113,13 @@ const addNewEditor = asyncHandler(async (req, res) => {
       .populate('owner', ['name', 'email']);
 
     if (document) {
+      if (document.owner.email.toString() === email) {
+        res.status(400);
+        throw new Error(
+          'You are the owner of this document. You cannot add yourself as an editor.'
+        );
+      }
+
       const alreadyAdded = document.editors.find(
         (editorCheck) => editorCheck._id.toString() === editor._id.toString()
       );
