@@ -1,6 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Redirect } from 'react-router-dom';
-import { createBrowserHistory } from 'history';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import { io } from 'socket.io-client';
@@ -25,19 +23,6 @@ const TOOLBAR_OPTIONS = [
 
   ['image', 'code-block', 'clean'],
 ];
-// const TOOLBAR_OPTIONS = [
-//   [{ header: [1, 2, 3, 4, 5, 6, false] }],
-//   [{ font: [] }],
-//   [{ list: 'ordered' }, { list: 'bullet' }],
-//   [{ color: [] }, { background: [] }], // dropdown with defaults from theme
-//   [{ script: 'sub' }, { script: 'super' }], // superscript/subscript
-//   [{ align: [] }],
-
-//   ['bold', 'italic', 'underline', 'strike'], // toggled buttons
-//   ['image', 'blockquote', 'code-block'],
-
-//   ['clean'], // remove formatting button
-// ];
 
 const TextEditor = ({ history }) => {
   const { id: documentId } = useParams();
@@ -64,7 +49,7 @@ const TextEditor = ({ history }) => {
   const [quill, setQuill] = useState();
 
   useEffect(() => {
-    const s = io('https://documenty.herokuapp.com:5001/');
+    const s = io();
     setSocket(s);
 
     return () => {

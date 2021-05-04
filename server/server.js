@@ -2,14 +2,19 @@ const mongoose = require('mongoose');
 const Document = require('./models/Document');
 const dotenv = require('dotenv');
 const path = require('path');
+const http = require('http');
+const socketio = require('socket.io');
 const express = require('express');
-const app = express();
+
 const cors = require('cors');
 const documentRoutes = require('./routes/documentRoutes');
 const userRoutes = require('./routes/userRoutes');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware.js');
 
 dotenv.config();
+
+const app = express();
+const server = http.createServer(app);
 
 mongoose.connect(process.env.MONGO_URI, {
   useUnifiedTopology: true,
@@ -18,9 +23,9 @@ mongoose.connect(process.env.MONGO_URI, {
   useFindAndModify: false,
 });
 
-const io = require('socket.io')(5001, {
+const io = socketio(server, {
   cors: {
-    origin: 'https://documenty.herokuapp.com:5000',
+    origin: 'http://localhost:5000',
     methods: ['GET', 'POST'],
   },
 });
@@ -94,7 +99,7 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(
+server.listen(
   PORT,
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`)
 );
