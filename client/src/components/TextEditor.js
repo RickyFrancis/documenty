@@ -5,7 +5,7 @@ import { io } from 'socket.io-client';
 import { useParams } from 'react-router-dom';
 import { Form, Button, Row, Col, Container, Alert } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-
+import Loader from '../components/Loader';
 import { useDispatch, useSelector } from 'react-redux';
 import ModalPopUp from '../components/ModalPopUp';
 import { DOCUMENT_DETAILS_RESET } from '../constants/documentConstants';
@@ -164,7 +164,8 @@ const TextEditor = ({ history }) => {
       modules: { toolbar: TOOLBAR_OPTIONS },
     });
     q.disable();
-    q.setText('Loading...');
+    setName('Loading Document Name...');
+    q.setText('Loading Document... Please wait a moment...');
     setQuill(q);
   }, []);
   return (
