@@ -17,6 +17,9 @@ import {
   DOCUMENT_LIST_FAIL,
   DOCUMENT_LIST_REQUEST,
   DOCUMENT_LIST_SUCCESS,
+  DOCUMENT_NAME_UPDATE_FAIL,
+  DOCUMENT_NAME_UPDATE_REQUEST,
+  DOCUMENT_NAME_UPDATE_SUCCESS,
 } from '../constants/documentConstants';
 
 export const listDocuments = (keyword = '', pageNumber = '1') => async (
@@ -119,6 +122,47 @@ export const getSingleDocument = (id) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: DOCUMENT_DETAILS_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const updateDocumentName = (name, documentId) => async (
+  dispatch,
+  getState
+) => {
+  try {
+    dispatch({ type: DOCUMENT_NAME_UPDATE_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.put(
+      `/api/documents/${documentId}/name`,
+      { name },
+      config
+    );
+    dispatch({
+      type: DOCUMENT_DETAILS_SUCCESS,
+      payload: data,
+    });
+
+    dispatch({
+      type: DOCUMENT_NAME_UPDATE_SUCCESS,
+    });
+  } catch (error) {
+    dispatch({
+      type: DOCUMENT_NAME_UPDATE_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message

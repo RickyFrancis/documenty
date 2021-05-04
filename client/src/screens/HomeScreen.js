@@ -33,11 +33,7 @@ const HomeScreen = ({ match, history }) => {
   const { loading, error, documents, page, pages } = documentList;
 
   const documentDelete = useSelector((state) => state.documentDelete);
-  const {
-    loading: loadingDelete,
-    error: errorDelete,
-    success: successDelete,
-  } = documentDelete;
+  const { loading: loadingDelete, error: errorDelete } = documentDelete;
 
   const userRegister = useSelector((state) => state.userRegister);
   const { userInfo } = userRegister;

@@ -9,6 +9,7 @@ const {
   deleteDocument,
   addNewEditor,
   removeEditor,
+  updateDocumentName,
 } = require('../controllers/documentController');
 // import { protect, admin } from '../middleware/authMiddleware.js';
 
@@ -21,5 +22,6 @@ router
   .route('/:id/editors')
   .post(protect, addNewEditor)
   .put(protect, removeEditor);
+router.route('/:id/name').put(protect, updateDocumentName);
 
 module.exports = router;

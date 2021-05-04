@@ -35,7 +35,6 @@ const ModalPopUp = ({ show, handleClose, id }) => {
     (state) => state.documentRemoveEditor
   );
   const {
-    loading: loadingRemoveEditor,
     error: errorRemoveEditor,
     success: successRemoveEditor,
   } = documentRemoveEditor;
@@ -44,7 +43,7 @@ const ModalPopUp = ({ show, handleClose, id }) => {
     if (!document || document._id !== id) {
       dispatch(getSingleDocument(id));
     }
-  }, []);
+  }, [dispatch, document, id]);
 
   const addEditorHandler = (e, email, documentId) => {
     e.preventDefault();

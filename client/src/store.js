@@ -21,6 +21,7 @@ import {
   documentDeleteReducer,
   documentListReducer,
   documentDetailsReducer,
+  documentUpdateNameReducer,
   documentAddEditorReducer,
   documentRemoveEditorReducer,
 } from './reducers/documentReducers';
@@ -29,6 +30,7 @@ const reducer = combineReducers({
   documentList: documentListReducer,
   documentDelete: documentDeleteReducer,
   documentDetails: documentDetailsReducer,
+  documentUpdateName: documentUpdateNameReducer,
   documentAddEditor: documentAddEditorReducer,
   documentRemoveEditor: documentRemoveEditorReducer,
   userLogin: userLoginReducer,

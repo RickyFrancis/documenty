@@ -18,6 +18,10 @@ import {
   DOCUMENT_LIST_REQUEST,
   DOCUMENT_LIST_RESET,
   DOCUMENT_LIST_SUCCESS,
+  DOCUMENT_NAME_UPDATE_FAIL,
+  DOCUMENT_NAME_UPDATE_REQUEST,
+  DOCUMENT_NAME_UPDATE_RESET,
+  DOCUMENT_NAME_UPDATE_SUCCESS,
 } from '../constants/documentConstants';
 
 export const documentListReducer = (state = { documents: [] }, action) => {
@@ -54,6 +58,21 @@ export const documentDetailsReducer = (state = { document: {} }, action) => {
       return { loading: false, error: action.payload };
     case DOCUMENT_DETAILS_RESET:
       return { loading: false, document: {} };
+    default:
+      return state;
+  }
+};
+
+export const documentUpdateNameReducer = (state = {}, action) => {
+  switch (action.type) {
+    case DOCUMENT_NAME_UPDATE_REQUEST:
+      return { loading: true };
+    case DOCUMENT_NAME_UPDATE_SUCCESS:
+      return { loading: false, success: true };
+    case DOCUMENT_NAME_UPDATE_FAIL:
+      return { loading: false, error: action.payload };
+    case DOCUMENT_NAME_UPDATE_RESET:
+      return {};
     default:
       return state;
   }

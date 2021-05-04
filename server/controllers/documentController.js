@@ -97,6 +97,30 @@ const deleteDocument = asyncHandler(async (req, res) => {
 // @desc Add new editor
 // @route POST /api/documents/:id/editors
 // @access Private
+const updateDocumentName = asyncHandler(async (req, res) => {
+  const { name } = req.body;
+  const document = await Document.findById(req.params.id)
+    .populate('editors', ['name', 'email'])
+    .populate('owner', ['name', 'email']);
+
+  if (document) {
+    if (document.owner._id.toString() === req.user._id.toString()) {
+      document.name = name;
+      await document.save();
+      res.json(document);
+    } else {
+      res.status(400);
+      throw new Error('You are not the owner of this document.');
+    }
+  } else {
+    res.status(404);
+    throw new Error('Document not found');
+  }
+});
+
+// @desc Add new editor
+// @route POST /api/documents/:id/editors
+// @access Private
 const addNewEditor = asyncHandler(async (req, res) => {
   const { email } = req.body;
 
@@ -198,4 +222,5 @@ module.exports = {
   addNewEditor,
   removeEditor,
   getSingleDocuments,
+  updateDocumentName,
 };
