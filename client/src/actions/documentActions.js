@@ -19,6 +19,7 @@ import {
   DOCUMENT_LIST_SUCCESS,
   DOCUMENT_NAME_UPDATE_FAIL,
   DOCUMENT_NAME_UPDATE_REQUEST,
+  DOCUMENT_NAME_UPDATE_RESET,
   DOCUMENT_NAME_UPDATE_SUCCESS,
 } from '../constants/documentConstants';
 
@@ -118,6 +119,9 @@ export const getSingleDocument = (id) => async (dispatch, getState) => {
     });
     dispatch({
       type: DOCUMENT_EDITOR_REMOVE_RESET,
+    });
+    dispatch({
+      type: DOCUMENT_NAME_UPDATE_RESET,
     });
   } catch (error) {
     dispatch({

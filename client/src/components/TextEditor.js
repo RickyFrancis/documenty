@@ -3,11 +3,10 @@ import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import { io } from 'socket.io-client';
 import { useParams } from 'react-router-dom';
-import { Form, Button, Row, Col } from 'react-bootstrap';
+import { Form, Button, Row, Col, Spinner } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import ModalPopUp from '../components/ModalPopUp';
-import Loader from '../components/Loader';
 import Message from '../components/Message';
 import { DOCUMENT_DETAILS_RESET } from '../constants/documentConstants';
 import { updateDocumentName } from '../actions/documentActions';
@@ -51,7 +50,7 @@ const TextEditor = ({ history }) => {
     error: errorUpdateName,
   } = documentUpdateName;
 
-  const [name, setName] = useState();
+  const [name, setName] = useState('');
   const [owner, setOwner] = useState();
   const [socket, setSocket] = useState();
   const [quill, setQuill] = useState();
@@ -204,7 +203,6 @@ const TextEditor = ({ history }) => {
             )}
           </Col>
         </Row>
-        {loadingUpdateName && <Loader />}
         {errorUpdateName && (
           <Message variant="danger">{errorUpdateName}</Message>
         )}
@@ -227,7 +225,13 @@ const TextEditor = ({ history }) => {
             </Col>
             <Col xs={2} md={1} className={!documentOwner && 'd-none'}>
               <Button type="submit" variant="primary" style={{ width: '100%' }}>
-                &nbsp;<i className="fas fa-check"></i>&nbsp;
+                &nbsp;
+                {loadingUpdateName ? (
+                  <Spinner animation="border" size="sm" />
+                ) : (
+                  <i className="fas fa-check"></i>
+                )}
+                &nbsp;
               </Button>
             </Col>
           </Form.Row>

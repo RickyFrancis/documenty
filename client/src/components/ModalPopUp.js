@@ -40,10 +40,15 @@ const ModalPopUp = ({ show, handleClose, id }) => {
   } = documentRemoveEditor;
 
   useEffect(() => {
-    if (!document || document._id !== id) {
+    let isMounted = true;
+    if (isMounted) {
       dispatch(getSingleDocument(id));
     }
-  }, [dispatch, document, id]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [dispatch, id]);
 
   const addEditorHandler = (e, email, documentId) => {
     e.preventDefault();
