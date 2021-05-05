@@ -132,12 +132,10 @@ const addNewEditor = asyncHandler(async (req, res) => {
     const document = await Document.findOne({
       _id: req.params.id,
       owner: req.user._id,
-    })
-      .populate('editors', ['name', 'email'])
-      .populate('owner', ['name', 'email']);
+    });
 
     if (document) {
-      if (document.owner.email.toString() === email) {
+      if (document.owner.toString() === editor._id.toString()) {
         res.status(400);
         throw new Error(
           'You are the owner of this document. You cannot add yourself as an editor.'
@@ -145,7 +143,7 @@ const addNewEditor = asyncHandler(async (req, res) => {
       }
 
       const alreadyAdded = document.editors.find(
-        (editorCheck) => editorCheck._id.toString() === editor._id.toString()
+        (editorCheck) => editorCheck.toString() === editor._id.toString()
       );
       if (alreadyAdded) {
         res.status(400);
@@ -188,24 +186,33 @@ const removeEditor = asyncHandler(async (req, res) => {
     const document = await Document.findOne({
       _id: req.params.id,
       owner: req.user._id,
-    })
-      .populate('editors', ['name', 'email'])
-      .populate('owner', ['name', 'email']);
+    });
 
     if (document) {
       const editorExists = document.editors.find(
-        (editorCheck) => editorCheck._id.toString() === editor._id.toString()
+        (editorCheck) => editorCheck.toString() === editor._id.toString()
       );
       if (!editorExists) {
         res.status(400);
         throw new Error('Editor does not exists');
       }
 
-      document.editors.pop(editor._id);
+      let editors = document.editors.filter(
+        (x) => x.toString() !== editor._id.toString()
+      );
+
+      document.editors = editors;
 
       await document.save();
 
-      res.json(document);
+      const updatedDocument = await Document.findOne({
+        _id: req.params.id,
+        owner: req.user._id,
+      })
+        .populate('editors', ['name', 'email'])
+        .populate('owner', ['name', 'email']);
+
+      res.json(updatedDocument);
     } else {
       res.status(404);
       throw new Error('Document not found');

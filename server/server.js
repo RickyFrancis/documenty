@@ -9,19 +9,22 @@ const express = require('express');
 const cors = require('cors');
 const documentRoutes = require('./routes/documentRoutes');
 const userRoutes = require('./routes/userRoutes');
-const { notFound, errorHandler } = require('./middleware/errorMiddleware.js');
+const { notFound, errorHandler } = require('./middleware/errorMiddleware');
+const connectDB = require('./config/db');
 
 dotenv.config();
+
+connectDB();
 
 const app = express();
 const server = http.createServer(app);
 
-mongoose.connect(process.env.MONGO_URI, {
-  useUnifiedTopology: true,
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
-});
+// mongoose.connect(process.env.MONGO_URI, {
+//   useUnifiedTopology: true,
+//   useNewUrlParser: true,
+//   useCreateIndex: true,
+//   useFindAndModify: false,
+// });
 
 const io = socketio(server, {
   cors: {
