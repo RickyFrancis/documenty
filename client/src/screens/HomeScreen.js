@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { v4 as uuidV4 } from 'uuid';
 import { Button, Row, Col, Table } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
+import Meta from '../components/Meta';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import Paginate from '../components/Paginate';
@@ -71,6 +72,7 @@ const HomeScreen = ({ match, history }) => {
 
   return (
     <>
+      <Meta title={'DocuMenty - Create, Share, Edit Documents'} index={true} />
       <Row className="align-items-center">
         <Col>
           <h1>My Documents</h1>

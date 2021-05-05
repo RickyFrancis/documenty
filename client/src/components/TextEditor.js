@@ -8,6 +8,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import ModalPopUp from '../components/ModalPopUp';
 import Message from '../components/Message';
+import Meta from '../components/Meta';
 import { DOCUMENT_DETAILS_RESET } from '../constants/documentConstants';
 import { updateDocumentName } from '../actions/documentActions';
 
@@ -184,6 +185,7 @@ const TextEditor = ({ history }) => {
 
   return (
     <>
+      <Meta title={name} />
       {show && (
         <ModalPopUp show={show} handleClose={handleClose} id={documentId} />
       )}
